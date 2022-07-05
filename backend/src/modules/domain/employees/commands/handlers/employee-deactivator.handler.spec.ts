@@ -14,7 +14,7 @@ describe('Employee Remover', () => {
 
     const employeeRepository = new MockEmployeeRepository();
 
-    it('should remove the employee from the repository', async () => {
+    async () => {
       // Arrange
       const handler = new EmployeeDeactivator(employeeRepository);
 
