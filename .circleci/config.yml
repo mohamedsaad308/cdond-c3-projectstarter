@@ -2,27 +2,6 @@ version: 2.1
 orbs:
   slack: circleci/slack@4.1
 jobs:
-  notify:
-    docker:
-      - image: "cimg/base:stable"
-    steps:
-      - slack/notify:
-          custom: |
-            {
-              "blocks": [
-                {
-                  "type": "section",
-                  "fields": [
-                    {
-                      "type": "plain_text",
-                      "text": "*This is a text notification*",
-                      "emoji": true
-                    }
-                  ]
-                }
-              ]
-            }
-          event: always
   build-frontend:
     docker:
       - image: cimg/node:13.8.0
@@ -39,6 +18,8 @@ jobs:
       - save_cache:
           paths: [frontend/node_modules]
           key: frontend-build
+      - slack/notify:
+          event: always
   build-backend:
     docker:
       - image: cimg/node:13.8.0
@@ -55,6 +36,8 @@ jobs:
       - save_cache:
           paths: [backend/node_modules]
           key: backend-build
+      - slack/notify:
+          event: always
   test-frontend:
     docker:
       - image: cimg/node:13.8.0
@@ -126,7 +109,3 @@ workflows:
           requires: [build-backend]
       - scan-frontend:
           requires: [build-frontend]
-  send-notification:
-    jobs:
-      - notify:
-          context: slack-secrets
