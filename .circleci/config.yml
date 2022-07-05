@@ -28,7 +28,7 @@ jobs:
           command: |
             cd backend
             npm i
-            npm run start:prod
+            npm run start
       - save_cache:
           paths: [backend/node_modules]
           key: backend-build
