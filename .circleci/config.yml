@@ -59,6 +59,33 @@ jobs:
             cd backend
             npm i
             npm run test
+  scan-frontend:
+    docker:
+      - image: cimg/node:13.8.0
+    steps:
+      - checkout
+      - restore_cache:
+          keys: [frontend-build]
+      - run:
+          name: Scan frontend dependencies
+          command: |
+            cd frontend
+            npm i
+            npm audit --audit-level=critical
+
+  scan-backend:
+    docker:
+      - image: cimg/node:13.8.0
+    steps:
+      - checkout
+      - restore_cache:
+          keys: [backend-build]
+      - run:
+          name: Scan backend dependencies
+          command: |
+            cd backend
+            npm i
+            npm audit --audit-level=critical
 workflows:
   default:
     jobs:
@@ -68,3 +95,7 @@ workflows:
           requires: [build-frontend]
       - test-backend:
           requires: [build-backend]
+      - scan-backend:
+          requires: [build-backend]
+      - scan-frontend:
+          requires: [build-frontend]
