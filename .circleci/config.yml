@@ -167,10 +167,10 @@ jobs:
             yum install tar gzip -y
             yum install python3 -y
             python3 -m pip install --upgrade --user ansible
-            echo 'export PATH=/root/.local/bin:$PATH' > ~/.profile
+            echo "export PATH=/root/.local/bin:$PATH" > ~/.profile
             source ~/.profile
             ansible --version
-            cat ~/.profile
+            echo $PATH
       - attach_workspace:
           at: ~/
       - run:
