@@ -167,14 +167,15 @@ jobs:
             yum install tar gzip -y
             yum install python3 -y
             python3 -m pip install --upgrade --user ansible
+            PATH=$PATH:~/.local/bin
             ansible --version
       - attach_workspace:
           at: ~/
       - run:
           name: Configure server
           command: |
-            # Your code here
-            exit 1
+            cd .circleci/ansible
+            ansible-playbook -i inventory.txt configure-server.yml
       - destroy_environment
 workflows:
   default:
