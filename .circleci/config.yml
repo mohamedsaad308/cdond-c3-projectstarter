@@ -148,11 +148,11 @@ jobs:
             aws ec2 describe-instances \
               --query 'Reservations[*].Instances[*].PublicDnsName' \
               --output text >> /.circleci/ansible/inventory.txt
-            cat .circleci/ansible/inventory.txt
       - persist_to_workspace:
           root: ~/.circleci/ansible/
           paths:
             - inventory.txt
+      - run: cat /.circleci/ansible/inventory.txt
       - destroy_environment
   configure-infrastructure:
     docker:
