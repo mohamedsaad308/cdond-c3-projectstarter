@@ -156,7 +156,7 @@ jobs:
       - destroy_environment
   configure-infrastructure:
     docker:
-      - image: amazon/aws-cli
+      - image: cimg/python:3.8.13
     steps:
       - checkout
       - add_ssh_keys:
@@ -164,12 +164,11 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            yum install tar gzip -y
-            yum install python3 -y
-            python3 -m pip install --upgrade  ansible
+            sudo apt install tar gzip -y
+            pip install awscli
+            python3 -m pip install --upgrade --user ansible
             echo "export PATH=~/.local/bin:$PATH" > ~/.profile
             source ~/.profile
-            ansible --version
       - attach_workspace:
           at: .circleci/ansible
       - run:
