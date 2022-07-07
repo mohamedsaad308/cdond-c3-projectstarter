@@ -203,7 +203,9 @@ jobs:
           name: Install aws/cli in case of failure
           when: on_fail
           command: |
-            apk add --no-cache aws-cli
+            sudo apt-get update
+            sudo apt-get upgrade -y
+            sudo apt install awscli -y
       - destroy_environment
 workflows:
   default:
