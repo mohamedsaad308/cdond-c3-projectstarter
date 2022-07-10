@@ -243,22 +243,37 @@ jobs:
           command: |
             echo "http://udapeople-${CIRCLE_WORKFLOW_ID:0:7}.s3-website-us-east-1.amazonaws.com"
       - destroy_environment
-  # deploy-backend:
-  #   docker:
-  #     # Docker image here that supports Ansible
-  #   steps:
-  #     # Checkout code from git
-  #     # Add ssh keys with fingerprint
-  #     # attach workspace
-  #     - run:
-  #         name: Install dependencies
-  #         command: |
-  #           # your code here
-  #     - run:
-  #         name: Deploy backend
-  #         command: |
-  #           # your code here
-  #     # Here's where you will add some code to rollback on failure
+  deploy-backend:
+    docker:
+      - image: cimg/python:3.8.13
+    steps:
+      - checkout
+      - add_ssh_keys:
+          fingerprints: [ce:80:5e:73:a6:2c:b5:77:d5:16:53:c7:55:fb:43:45]
+      - run:
+          name: Install dependencies
+          command: |
+            sudo apt install tar gzip -y
+            pip install awscli
+            python3 -m pip install --upgrade --user ansible
+            echo "export PATH=~/.local/bin:$PATH" > ~/.profile
+            source ~/.profile
+      - attach_workspace:
+          at: .circleci/ansible
+      - run:
+          name: Deploy backend
+          command: |
+            cd backend
+            npm i
+            npm run build
+            cd ..
+            # Zip the directory
+            tar -C backend -czvf artifact.tar.gz .
+            cd .circleci/ansible
+            echo "Contents  of the inventory.txt file is -------"
+            cat inventory.txt
+            ansible-playbook -i inventory.txt deploy-backend.yml
+      - destroy_environment
 workflows:
   default:
     jobs:
@@ -280,5 +295,5 @@ workflows:
           requires: [configure-infrastructure]
       - deploy-frontend:
           requires: [run-migrations]
-      # - deploy-backend:
-      #     requires: [run-migrations]
+      - deploy-backend:
+          requires: [run-migrations]
