@@ -255,9 +255,10 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            sudo apt-get update
-            sudo apt-get upgrade -y
-            sudo apt install awscli -y
+            curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg |  apt-key add -
+            apt-get update
+            apt-get upgrade -y
+            apt install awscli -y
             python3 -m pip install --upgrade --user ansible
             echo "export PATH=~/.local/bin:$PATH" > ~/.profile
             source ~/.profile
