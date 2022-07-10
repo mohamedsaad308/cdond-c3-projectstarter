@@ -4,8 +4,6 @@
     src: ../../artifact.tar.gz
     dest: ~/
 
-- debug: msg="{{ copyBackend.stderr }}"
-
 - name: Extract the zipped artifact
   register: extract
   ansible.builtin.unarchive:
