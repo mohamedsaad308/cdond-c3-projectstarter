@@ -9,6 +9,7 @@
   ansible.builtin.unarchive:
     src: artifact.tar.gz
     dest: ~/
+    remote_src: yes
 
 - name: Start server
   shell: |
