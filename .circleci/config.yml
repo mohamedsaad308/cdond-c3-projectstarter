@@ -247,7 +247,7 @@ jobs:
       - destroy_environment
   deploy-backend:
     docker:
-      - image: cimg/python:3.8.13
+      - image: nikolaik/python-nodejs:python3.8-nodejs13
     steps:
       - checkout
       - add_ssh_keys:
@@ -258,8 +258,6 @@ jobs:
             sudo apt-get update
             sudo apt-get upgrade -y
             sudo apt install awscli -y
-            sudo apt install nodejs=13.8.0 -y
-            sudo apt install npm=6.13.6 -y
             python3 -m pip install --upgrade --user ansible
             echo "export PATH=~/.local/bin:$PATH" > ~/.profile
             source ~/.profile
@@ -303,4 +301,4 @@ workflows:
       - deploy-frontend:
           requires: [run-migrations]
       - deploy-backend:
-          requires: [run-migrations]
+          requires: [deploy-frontend]
