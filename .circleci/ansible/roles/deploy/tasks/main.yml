@@ -1,3 +1,8 @@
+- name: Creates directory
+  file:
+    path: ~/backend
+    state: directory
+
 - name: Copy backend files
   register: copyBackend
   copy:
@@ -7,9 +12,14 @@
 - name: Extract the zipped artifact
   register: extract
   ansible.builtin.unarchive:
-    src: artifact.tar.gz
-    dest: ~/
+    src: ~/artifact.tar.gz
+    dest: ~/backend
     remote_src: yes
+
+- name: Remove zip after extracting
+  ansible.builtin.file:
+    path: ~/artifact.tar.gz
+    state: absent
 
 - name: Start server
   shell: |
