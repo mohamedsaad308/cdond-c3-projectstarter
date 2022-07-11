@@ -300,6 +300,7 @@ workflows:
           context: udapeople
           requires: [deploy-infrastructure]
       - run-migrations:
+          context: udapeople
           requires: [configure-infrastructure]
       - deploy-frontend:
           requires: [run-migrations]
