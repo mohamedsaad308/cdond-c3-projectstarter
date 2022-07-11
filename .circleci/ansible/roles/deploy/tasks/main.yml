@@ -23,7 +23,7 @@
 
 - name: Start server
   shell: |
-    cp .env ~/backend
+    mv env ~/backend/.env
     cd ~/backend
     npm install
     pm2 stop default

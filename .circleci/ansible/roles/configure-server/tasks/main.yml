@@ -32,5 +32,6 @@
 - name: Copy backend files
   register: copydotenv
   copy:
-    src: ../../.env
+    src: ../../env
     dest: ~/
+    remote_src: yes
