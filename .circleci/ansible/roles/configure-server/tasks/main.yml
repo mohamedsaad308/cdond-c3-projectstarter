@@ -1,4 +1,8 @@
 ---
+- name: Debug all env vars
+  debug:
+    var: TYPEORM_CONNECTION
+
 - name: "update apt packages."
   become: true
   apt:

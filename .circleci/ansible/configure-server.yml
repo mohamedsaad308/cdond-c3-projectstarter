@@ -31,10 +31,5 @@
     - TYPEORM_DATABASE: "{{ lookup('ansible.builtin.env', 'TYPEORM_DATABASE')}}"
     - TYPEORM_MIGRATIONS: "{{ lookup('ansible.builtin.env', 'TYPEORM_MIGRATIONS')}}"
     - TYPEORM_MIGRATIONS_DIR: "{{ lookup('ansible.builtin.env', 'TYPEORM_MIGRATIONS_DIR')}}"
-
-- name: Debug all env vars
-  debug:
-    var: ansible_env
-
   roles:
     - configure-server
