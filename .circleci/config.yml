@@ -20,20 +20,20 @@ commands:
           command: |
             aws cloudformation delete-stack --stack-name udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}
             aws cloudformation delete-stack --stack-name udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}
-  create_dot_env:
-    steps:
-      - run:
-          name: Create .env file
-          command: |
-            echo TYPEORM_CONNECTION=$TYPEORM_CONNECTION > env
-            echo TYPEORM_MIGRATIONS_DIR=$TYPEORM_MIGRATIONS_DIR >> env
-            echo TYPEORM_ENTITIES=$TYPEORM_ENTITIES >> env
-            echo TYPEORM_MIGRATIONS=$TYPEORM_MIGRATIONS >> env
-            echo TYPEORM_HOST=$TYPEORM_HOST  >> env
-            echo TYPEORM_PORT=$TYPEORM_PORT  >> env
-            echo TYPEORM_USERNAME=$TYPEORM_USERNAME  >> env
-            echo TYPEORM_PASSWORD=$TYPEORM_PASSWORD  >> env
-            echo TYPEORM_DATABASE=$TYPEORM_DATABASE  >> env
+  # create_dot_env:
+  #   steps:
+  #     - run:
+  #         name: Create .env file
+  #         command: |
+  #           echo TYPEORM_CONNECTION=$TYPEORM_CONNECTION > env
+  #           echo TYPEORM_MIGRATIONS_DIR=$TYPEORM_MIGRATIONS_DIR >> env
+  #           echo TYPEORM_ENTITIES=$TYPEORM_ENTITIES >> env
+  #           echo TYPEORM_MIGRATIONS=$TYPEORM_MIGRATIONS >> env
+  #           echo TYPEORM_HOST=$TYPEORM_HOST  >> env
+  #           echo TYPEORM_PORT=$TYPEORM_PORT  >> env
+  #           echo TYPEORM_USERNAME=$TYPEORM_USERNAME  >> env
+  #           echo TYPEORM_PASSWORD=$TYPEORM_PASSWORD  >> env
+  #           echo TYPEORM_DATABASE=$TYPEORM_DATABASE  >> env
 
 jobs:
   build-frontend:
@@ -185,11 +185,10 @@ jobs:
             source ~/.profile
       - attach_workspace:
           at: .circleci/ansible
-      - create_dot_env
+      # - create_dot_env
       - run:
           name: Configure server
           command: |
-            cat env
             cd .circleci/ansible
             cat inventory.txt
             ansible-playbook -i inventory.txt configure-server.yml
@@ -286,6 +285,7 @@ jobs:
           name: Deploy backend
           command: |
             cd backend
+            cat env.prod
             npm i
             npm run build
             cd ..
