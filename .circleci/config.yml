@@ -285,7 +285,6 @@ jobs:
           name: Deploy backend
           command: |
             cd backend
-            cat .env.prod
             npm i
             npm run build
             cd ..
