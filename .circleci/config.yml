@@ -171,6 +171,7 @@ jobs:
             source ~/.profile
       - attach_workspace:
           at: .circleci/ansible
+      - run: echo $TYPEORM_CONNECTION
       - run:
           name: Configure server
           command: |
@@ -296,9 +297,8 @@ workflows:
       - deploy-infrastructure:
           requires: [test-frontend, test-backend, scan-frontend, scan-backend]
       - configure-infrastructure:
+          context: udapeople
           requires: [deploy-infrastructure]
-          context:
-            - udapeople
       - run-migrations:
           requires: [configure-infrastructure]
       - deploy-frontend:
