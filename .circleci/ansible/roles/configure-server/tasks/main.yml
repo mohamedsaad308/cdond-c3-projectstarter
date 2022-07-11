@@ -34,4 +34,3 @@
   copy:
     src: ../../env
     dest: ~/
-    remote_src: yes
