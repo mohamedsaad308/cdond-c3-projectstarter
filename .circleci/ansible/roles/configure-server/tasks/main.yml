@@ -1,17 +1,11 @@
 ---
-- name: Create /etc/environment file
-  shell: |
-    cd ~
-    echo "TYPEORM_CONNECTION={{ lookup('ansible.builtin.env', 'TYPEORM_CONNECTION')}}" >> /etc/environment
-    echo "TYPEORM_ENTITIES={{ lookup('ansible.builtin.env', 'TYPEORM_ENTITIES')}}" >> /etc/environment
-    echo "TYPEORM_HOST={{ lookup('ansible.builtin.env', 'TYPEORM_HOST')}}" >> /etc/environment
-    echo "TYPEORM_PORT=5432" >> /etc/environment
-    echo "TYPEORM_USERNAME={{ lookup('ansible.builtin.env', 'TYPEORM_USERNAME')}}" >> /etc/environment
-    echo "TYPEORM_PASSWORD={{ lookup('ansible.builtin.env', 'TYPEORM_PASSWORD')}}" >> /etc/environment
-    echo "TYPEORM_DATABASE={{ lookup('ansible.builtin.env', 'TYPEORM_DATABASE')}}" >> /etc/environment
-    echo "TYPEORM_MIGRATIONS={{ lookup('ansible.builtin.env', 'TYPEORM_MIGRATIONS')}}" >> /etc/environment
-    echo "TYPEORM_MIGRATIONS_DIR={{ lookup('ansible.builtin.env', 'TYPEORM_MIGRATIONS_DIR')}}" >> /etc/environment
-    source /etc/environment
+- name: customize /etc/environment
+  ansible.builtin.lineinfile:
+    dest: "/etc/environment"
+    state: present
+    regexp: "^{{ item.key }}="
+    line: "{{ item.key }}={{ item.value }}"
+  with_items: "{{ os_environment }}"
 
 - name: "update apt"
   become: true

@@ -10,6 +10,25 @@
     - ansible_python_interpreter: /usr/bin/python3
     - ansible_host_key_checking: false
     - ansible_stdout_callback: yaml
+    - os_environment:
+        - key: TYPEORM_CONNECTION
+          value: "{{ lookup('ansible.builtin.env', 'TYPEORM_CONNECTION'/etc/environment)}}"
+        - key: TYPEORM_ENTITIES
+          value: "{{ lookup('ansible.builtin.env', 'TYPEORM_ENTITIES'/etc/environment)}}"
+        - key: TYPEORM_HOST
+          value: "{{ lookup('ansible.builtin.env', 'TYPEORM_HOST'/etc/environment)}}"
+        - key: TYPEORM_PORT
+          value: 5432
+        - key: TYPEORM_USERNAME
+          value: "{{ lookup('ansible.builtin.env', 'TYPEORM_USERNAME'/etc/environment)}}"
+        - key: TYPEORM_PASSWORD
+          value: "{{ lookup('ansible.builtin.env', 'TYPEORM_PASSWORD'/etc/environment)}}"
+        - key: TYPEORM_DATABASE
+          value: "{{ lookup('ansible.builtin.env', 'TYPEORM_DATABASE'/etc/environment)}}"
+        - key: TYPEORM_MIGRATIONS
+          value: "{{ lookup('ansible.builtin.env', 'TYPEORM_MIGRATIONS'/etc/environment)}}"
+        - key: TYPEORM_MIGRATIONS_DIR
+          value: "{{ lookup('ansible.builtin.env', 'TYPEORM_MIGRATIONS_DIR'/etc/environment)}}"
   pre_tasks:
     - name: "wait 600 seconds for target connection to become reachable/usable."
       ansible.builtin.wait_for_connection:
@@ -21,15 +40,15 @@
 
   # Get the environment variables from CircleCI and add to the EC2 instance
   environment:
-    TYPEORM_CONNECTION: "{{ lookup('ansible.builtin.env', 'TYPEORM_CONNECTION', allow_unsafe=True)}}"
-    TYPEORM_ENTITIES: "{{ lookup('ansible.builtin.env', 'TYPEORM_ENTITIES', allow_unsafe=True)}}"
-    TYPEORM_HOST: "{{ lookup('ansible.builtin.env', 'TYPEORM_HOST', allow_unsafe=True)}}"
+    TYPEORM_CONNECTION: "{{ lookup('ansible.builtin.env', 'TYPEORM_CONNECTION'/etc/environment)}}"
+    TYPEORM_ENTITIES: "{{ lookup('ansible.builtin.env', 'TYPEORM_ENTITIES'/etc/environment)}}"
+    TYPEORM_HOST: "{{ lookup('ansible.builtin.env', 'TYPEORM_HOST'/etc/environment)}}"
     TYPEORM_PORT: 5432
-    TYPEORM_USERNAME: "{{ lookup('ansible.builtin.env', 'TYPEORM_USERNAME', allow_unsafe=True)}}"
-    TYPEORM_PASSWORD: "{{ lookup('ansible.builtin.env', 'TYPEORM_PASSWORD', allow_unsafe=True)}}"
-    TYPEORM_DATABASE: "{{ lookup('ansible.builtin.env', 'TYPEORM_DATABASE', allow_unsafe=True)}}"
-    TYPEORM_MIGRATIONS: "{{ lookup('ansible.builtin.env', 'TYPEORM_MIGRATIONS', allow_unsafe=True)}}"
-    TYPEORM_MIGRATIONS_DIR: "{{ lookup('ansible.builtin.env', 'TYPEORM_MIGRATIONS_DIR', allow_unsafe=True)}}"
+    TYPEORM_USERNAME: "{{ lookup('ansible.builtin.env', 'TYPEORM_USERNAME'/etc/environment)}}"
+    TYPEORM_PASSWORD: "{{ lookup('ansible.builtin.env', 'TYPEORM_PASSWORD'/etc/environment)}}"
+    TYPEORM_DATABASE: "{{ lookup('ansible.builtin.env', 'TYPEORM_DATABASE'/etc/environment)}}"
+    TYPEORM_MIGRATIONS: "{{ lookup('ansible.builtin.env', 'TYPEORM_MIGRATIONS'/etc/environment)}}"
+    TYPEORM_MIGRATIONS_DIR: "{{ lookup('ansible.builtin.env', 'TYPEORM_MIGRATIONS_DIR'/etc/environment)}}"
 
   roles:
     - configure-server
