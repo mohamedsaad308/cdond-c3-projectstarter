@@ -324,7 +324,7 @@ jobs:
       - run:
           name: Backend smoke test.
           command: |
-            export BACKEND_DNS=$(aws ec2 describe-instances \
+            BACKEND_DNS=$(aws ec2 describe-instances \
             --query "Reservations[*].Instances[*].PublicDnsName" \
             --output=text)
             export API_URL="http://${BACKEND_DNS}:3030"
