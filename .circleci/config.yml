@@ -306,7 +306,7 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            apk add --no-cache aws-cli
+            apk add --no-cache aws-cli curl
 
       - run:
           name: Backend smoke test.
@@ -333,6 +333,25 @@ jobs:
             else
               return 1
             fi
+      - destroy_environment
+      - revert_migrations
+  cloudfront-update:
+    docker:
+      - image: alpine:3.16.0
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: |
+            apk add --no-cache aws-cli curl
+      - run:
+          name: Update cloudfront distribution
+          command: |
+            aws cloudformation deploy \
+                    --template-file .circleci/files/cloudfront.yml \
+                    --stack-name InitialStack \
+                    --parameter-overrides WorkflowID="udapeople-${CIRCLE_WORKFLOW_ID:0:7}" \
+                    --tags project=udapeople
       - destroy_environment
       - revert_migrations
 workflows:
