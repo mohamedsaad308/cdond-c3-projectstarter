@@ -1,6 +1,7 @@
 ---
 - name: Create .prod.env file
   shell: |
+    cd ~
     echo "TYPEORM_CONNECTION={{ lookup('ansible.builtin.env', 'TYPEORM_CONNECTION', allow_unsafe=True)}}" > .prod.env
     echo "TYPEORM_ENTITIES={{ lookup('ansible.builtin.env', 'TYPEORM_ENTITIES', allow_unsafe=True)}}" >> .prod.env
     echo "TYPEORM_HOST={{ lookup('ansible.builtin.env', 'TYPEORM_HOST', allow_unsafe=True)}}" >> .prod.env
