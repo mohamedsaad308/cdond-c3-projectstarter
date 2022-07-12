@@ -315,9 +315,9 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            sudo apt-get update
-            sudo apt-get upgrade -y
-            sudo apt install awscli -y
+            apt-get update
+            apt-get upgrade -y
+            apt install awscli curl -y
       - restore_cache:
           keys: [backend-dns]
 
