@@ -3,6 +3,14 @@
   debug:
     msg: "TYPEORM_MIGRATIONS_DIR: {{ TYPEORM_MIGRATIONS_DIR }}, TYPEORM_CONNECTION: {{ TYPEORM_CONNECTION }}"
 
+- name: customize /etc/environment
+  ansible.builtin.lineinfile:
+    dest: "/etc/environment"
+    state: present
+    regexp: "^{{ item.key }}="
+    line: "{{ item.key }}={{ item.value }}"
+  with_items: "{{ os_environment }}"
+
 - name: "update apt"
   become: true
   apt:
