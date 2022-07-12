@@ -324,9 +324,10 @@ jobs:
       - run:
           name: Backend smoke test.
           command: |
-            BACKEND_DNS=$(aws ec2 describe-instances \
+            export BACKEND_DNS=$(aws ec2 describe-instances \
             --query "Reservations[*].Instances[*].PublicDnsName" \
             --output=text)
+            export BACKEND_DNS=$(echo $BACKEND_DNS | xargs)
             export API_URL="http://${BACKEND_DNS}:3030"
             echo "API_URL = ${API_URL}"
             if curl "${API_URL}/api/status" | grep "ok"
