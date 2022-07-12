@@ -324,7 +324,6 @@ jobs:
       - run:
           name: Backend smoke test.
           command: |
-            ls
             export BACKEND_DNS=$(aws ec2 describe-instances \
             --query "Reservations[*].Instances[*].PublicDnsName" \
             --output=text)
@@ -428,12 +427,17 @@ workflows:
           context: udapeople
           requires: [configure-infrastructure]
       - deploy-frontend:
+          context: udapeople
           requires: [run-migrations]
       - deploy-backend:
+          context: udapeople
           requires: [deploy-frontend]
       - smoke-test:
-          requires: [deploy-backend, deploy-frontend]
+          context: udapeople
+          # requires: [deploy-backend, deploy-frontend]
       - cloudfront-update:
+          context: udapeople
           requires: [smoke-test]
       - cleanup:
+          context: udapeople
           requires: [cloudfront-update]
