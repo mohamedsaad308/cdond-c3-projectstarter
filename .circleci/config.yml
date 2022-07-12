@@ -28,13 +28,14 @@ commands:
           name: Revert database migrations
           when: on_fail
           command: |
+            echo "Reverting database migrations if exists.........."
             SUCCESS=$(curl --insecure  https://kvdb.io/4zZ1b4NFt2ziX1o4pnyHBw/migration_${CIRCLE_WORKFLOW_ID:0:7})
             if (( $SUCCESS == 1 ));
             then
                 echo "Reverting database migrations.........."
                 cd backend
                 npm install
-                npm run migration:revert
+                npm run migrations:revert
             fi
 jobs:
   build-frontend:
@@ -243,10 +244,18 @@ jobs:
             export BACKEND_IP=$(aws ec2 describe-instances \
             --query "Reservations[*].Instances[*].PublicIpAddress" \
             --output=text)
-            export API_URL="http://${BACKEND_IP}:3030"
+            export BACKEND_DNS=$(aws ec2 describe-instances \
+            --query "Reservations[*].Instances[*].PublicDnsName" \
+            --output=text)
+            export API_URL="http://${BACKEND_DNS}:3030"
             echo "API_URL = ${API_URL}"
-            echo API_URL="http://${BACKEND_IP}:3030" >> frontend/.env
+            echo API_URL="http://${BACKEND_DNS}:3030" >> frontend/.env
+            echo $API_URL > backend-dns
             cat frontend/.env
+      - save_cache:
+          key: backend-dns
+          paths:
+            - backend-dns
       - restore_cache:
           keys: [frontend-build]
       - run:
@@ -308,14 +317,13 @@ jobs:
           name: Install dependencies
           command: |
             apk add --no-cache aws-cli curl
+      - restore_cache:
+          keys: [backend-dns]
 
       - run:
           name: Backend smoke test.
           command: |
-            export BACKEND_IP=$(aws ec2 describe-instances \
-            --query "Reservations[*].Instances[*].PublicIpAddress" \
-            --output=text)
-            export API_URL="http://${BACKEND_IP}:3030"
+            API_URL=$(cat backend-dns)
             echo "API_URL = ${API_URL}"
             if curl "${API_URL}/api/status" | grep "ok"
             then
