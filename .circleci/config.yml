@@ -309,20 +309,26 @@ jobs:
       - revert_migrations
   smoke-test:
     docker:
-      - image: alpine:3.16.0
+      - image: node:13.8.0-stretch-slim
     steps:
       - checkout
       - run:
           name: Install dependencies
           command: |
-            apk add --no-cache aws-cli curl
+            sudo apt-get update
+            sudo apt-get upgrade -y
+            sudo apt install awscli -y
       - restore_cache:
           keys: [backend-dns]
 
       - run:
           name: Backend smoke test.
           command: |
-            API_URL=$(cat /project/backend-dns)
+            ls
+            export BACKEND_DNS=$(aws ec2 describe-instances \
+            --query "Reservations[*].Instances[*].PublicDnsName" \
+            --output=text)
+            export API_URL="http://${BACKEND_DNS}:3030"
             echo "API_URL = ${API_URL}"
             if curl "${API_URL}/api/status" | grep "ok"
             then
@@ -425,8 +431,8 @@ workflows:
           requires: [run-migrations]
       - deploy-backend:
           requires: [deploy-frontend]
-      - smoke-test:
-          requires: [deploy-backend, deploy-frontend]
+      - smoke-test
+        # requires: [deploy-backend, deploy-frontend]
       - cloudfront-update:
           requires: [smoke-test]
       - cleanup:
