@@ -1,15 +1,15 @@
 ---
-- name: print variables
-  debug:
-    msg: "TYPEORM_MIGRATIONS_DIR: {{ TYPEORM_MIGRATIONS_DIR }}, TYPEORM_CONNECTION: {{ TYPEORM_CONNECTION }}"
-
-- name: customize /etc/environment
-  ansible.builtin.lineinfile:
-    dest: "/etc/environment"
-    state: present
-    regexp: "^{{ item.key }}="
-    line: "{{ item.key }}={{ item.value }}"
-  with_items: "{{ os_environment }}"
+- name: Create .prod.env file
+  shell: |
+    echo "TYPEORM_CONNECTION={{ lookup('ansible.builtin.env', 'TYPEORM_CONNECTION', allow_unsafe=True)}}" > .prod.env
+    echo "TYPEORM_ENTITIES={{ lookup('ansible.builtin.env', 'TYPEORM_ENTITIES', allow_unsafe=True)}}" >> .prod.env
+    echo "TYPEORM_HOST={{ lookup('ansible.builtin.env', 'TYPEORM_HOST', allow_unsafe=True)}}" >> .prod.env
+    echo "TYPEORM_PORT=5432" >> .prod.env
+    echo "TYPEORM_USERNAME={{ lookup('ansible.builtin.env', 'TYPEORM_USERNAME', allow_unsafe=True)}}" >> .prod.env
+    echo "TYPEORM_PASSWORD={{ lookup('ansible.builtin.env', 'TYPEORM_PASSWORD', allow_unsafe=True)}}" >> .prod.env
+    echo "TYPEORM_DATABASE={{ lookup('ansible.builtin.env', 'TYPEORM_DATABASE', allow_unsafe=True)}}" >> .prod.env
+    echo "TYPEORM_MIGRATIONS={{ lookup('ansible.builtin.env', 'TYPEORM_MIGRATIONS', allow_unsafe=True)}}" >> .prod.env
+    echo "TYPEORM_MIGRATIONS_DIR={{ lookup('ansible.builtin.env', 'TYPEORM_MIGRATIONS_DIR', allow_unsafe=True)}}" >> .prod.env
 
 - name: "update apt"
   become: true
