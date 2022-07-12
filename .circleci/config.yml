@@ -219,6 +219,7 @@ jobs:
             sudo apt-get upgrade -y
             sudo apt install awscli -y
       - destroy_environment
+      - revert_migrations
   deploy-frontend:
     docker:
       - image: cimg/node:13.8.0
