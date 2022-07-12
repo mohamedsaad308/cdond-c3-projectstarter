@@ -34,7 +34,7 @@ commands:
                 echo "Reverting database migrations if exists.........."
                 cd backend
                 npm install
-                npm run migration:revert
+                npm run migrations:revert
             fi
 jobs:
   build-frontend:
@@ -319,7 +319,7 @@ jobs:
             apt-get upgrade -y
             apt install awscli curl -y
       - restore_cache:
-          keys: [backend-dns]
+          keys: backend-dns
 
       - run:
           name: Backend smoke test.
@@ -332,9 +332,9 @@ jobs:
             echo "API_URL = ${API_URL}"
             if curl "${API_URL}/api/status" | grep "ok"
             then
-                return 0
+                exit 0
             else
-                return 1
+                exit 1
             fi
       - run:
           name: Frontend smoke test.
