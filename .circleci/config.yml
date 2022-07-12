@@ -435,7 +435,7 @@ workflows:
           requires: [deploy-frontend]
       - smoke-test:
           context: udapeople
-          # requires: [deploy-backend, deploy-frontend]
+          requires: [deploy-backend, deploy-frontend]
       - cloudfront-update:
           context: udapeople
           requires: [smoke-test]
