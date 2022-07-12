@@ -1,16 +1,17 @@
 ---
-- name: Create .prod.env file
+- name: Create /etc/environment file
   shell: |
     cd ~
-    echo "TYPEORM_CONNECTION={{ lookup('ansible.builtin.env', 'TYPEORM_CONNECTION', allow_unsafe=True)}}" > .prod.env
-    echo "TYPEORM_ENTITIES={{ lookup('ansible.builtin.env', 'TYPEORM_ENTITIES', allow_unsafe=True)}}" >> .prod.env
-    echo "TYPEORM_HOST={{ lookup('ansible.builtin.env', 'TYPEORM_HOST', allow_unsafe=True)}}" >> .prod.env
-    echo "TYPEORM_PORT=5432" >> .prod.env
-    echo "TYPEORM_USERNAME={{ lookup('ansible.builtin.env', 'TYPEORM_USERNAME', allow_unsafe=True)}}" >> .prod.env
-    echo "TYPEORM_PASSWORD={{ lookup('ansible.builtin.env', 'TYPEORM_PASSWORD', allow_unsafe=True)}}" >> .prod.env
-    echo "TYPEORM_DATABASE={{ lookup('ansible.builtin.env', 'TYPEORM_DATABASE', allow_unsafe=True)}}" >> .prod.env
-    echo "TYPEORM_MIGRATIONS={{ lookup('ansible.builtin.env', 'TYPEORM_MIGRATIONS', allow_unsafe=True)}}" >> .prod.env
-    echo "TYPEORM_MIGRATIONS_DIR={{ lookup('ansible.builtin.env', 'TYPEORM_MIGRATIONS_DIR', allow_unsafe=True)}}" >> .prod.env
+    echo "TYPEORM_CONNECTION={{ lookup('ansible.builtin.env', 'TYPEORM_CONNECTION')}}" >> /etc/environment
+    echo "TYPEORM_ENTITIES={{ lookup('ansible.builtin.env', 'TYPEORM_ENTITIES')}}" >> /etc/environment
+    echo "TYPEORM_HOST={{ lookup('ansible.builtin.env', 'TYPEORM_HOST')}}" >> /etc/environment
+    echo "TYPEORM_PORT=5432" >> /etc/environment
+    echo "TYPEORM_USERNAME={{ lookup('ansible.builtin.env', 'TYPEORM_USERNAME')}}" >> /etc/environment
+    echo "TYPEORM_PASSWORD={{ lookup('ansible.builtin.env', 'TYPEORM_PASSWORD')}}" >> /etc/environment
+    echo "TYPEORM_DATABASE={{ lookup('ansible.builtin.env', 'TYPEORM_DATABASE')}}" >> /etc/environment
+    echo "TYPEORM_MIGRATIONS={{ lookup('ansible.builtin.env', 'TYPEORM_MIGRATIONS')}}" >> /etc/environment
+    echo "TYPEORM_MIGRATIONS_DIR={{ lookup('ansible.builtin.env', 'TYPEORM_MIGRATIONS_DIR')}}" >> /etc/environment
+    source /etc/environment
 
 - name: "update apt"
   become: true
