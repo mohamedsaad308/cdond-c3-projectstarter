@@ -30,8 +30,7 @@ commands:
           command: |
             echo "Reverting database migrations if exists.........."
             SUCCESS=$(curl --insecure  https://kvdb.io/4zZ1b4NFt2ziX1o4pnyHBw/migration_${CIRCLE_WORKFLOW_ID:0:7})
-            if ((  == 1 ))
-            if [ "$SUCCESS" == "1" ];
+            if [ "$SUCCESS" == "1" ]
             then
                 cd ~/project/backend
                 npm install
