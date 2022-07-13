@@ -251,8 +251,8 @@ jobs:
             echo API_URL="http://${BACKEND_DNS}:3030" >> frontend/.env
             echo $API_URL > backend-dns
             cat frontend/.env
-      - save_cache:
-          key: backend-dns
+      - persist_to_workspace:
+          root: .
           paths:
             - backend-dns
       - restore_cache:
@@ -318,9 +318,11 @@ jobs:
             apt-get update
             apt-get upgrade -y
             apt install awscli curl -y
-      - restore_cache:
-          keys: backend-dns
-
+      - attach_workspace:
+          at: .
+      - run:
+          name: Test if workspace file exists
+          command: ls
       - run:
           name: Backend smoke test.
           command: |
@@ -351,13 +353,15 @@ jobs:
       - revert_migrations
   cloudfront-update:
     docker:
-      - image: alpine:3.16.0
+      - image: node:13.8.0-stretch-slim
     steps:
       - checkout
       - run:
           name: Install dependencies
           command: |
-            apk add --no-cache aws-cli curl
+            apt-get update
+            apt-get upgrade -y
+            apt install awscli curl -y
       - run:
           name: Update cloudfront distribution
           command: |
@@ -373,6 +377,10 @@ jobs:
       - image: alpine:3.16.0
     steps:
       - checkout
+      - run:
+          name: Install dependencies
+          command: |
+            apk add --no-cache aws-cli
       - run:
           name: Get old stack workflow id
           command: |
@@ -393,7 +401,7 @@ jobs:
             # if [[ "${OldWorkflowID}" =~ "${STACKS[@]}"  ]]
             if [[ "${CIRCLE_WORKFLOW_ID:0:7}" =~ "${OldWorkflowID}" ]]
             then
-              echo "This is the first stack"
+              echo "This is the only stack running"
             else
               echo "Removing the old stack........."
               aws s3 rm "s3://udapeople-${OldWorkflowID}" --recursive
