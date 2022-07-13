@@ -359,9 +359,10 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            apt-get update
-            apt-get upgrade -y
-            apt install awscli curl -y
+            apt install unzip curl -y
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
       - run:
           name: Update cloudfront distribution
           command: |
@@ -370,8 +371,8 @@ jobs:
                     --stack-name InitialStack \
                     --parameter-overrides WorkflowID="udapeople-${CIRCLE_WORKFLOW_ID:0:7}" \
                     --tags project=udapeople
-      - destroy_environment
-      - revert_migrations
+      # - destroy_environment
+      # - revert_migrations
   cleanup:
     docker:
       - image: alpine:3.16.0
@@ -457,11 +458,11 @@ workflows:
           context: udapeople
           requires: [deploy-backend, deploy-frontend]
       - cloudfront-update:
-          filters:
-            branches:
-              only: master
+          # filters:
+          #   branches:
+          #     only: master
           context: udapeople
-          requires: [smoke-test]
+          # requires: [smoke-test]
       - cleanup:
           filters:
             branches:
