@@ -467,9 +467,9 @@ workflows:
               only: master
           context: udapeople
           requires: [smoke-test]
-      - cleanup
-        filters:
-          branches:
-            only: master
-        context: udapeople
-        requires: [cloudfront-update]
+      - cleanup:
+          filters:
+            branches:
+              only: master
+          context: udapeople
+          requires: [cloudfront-update]
