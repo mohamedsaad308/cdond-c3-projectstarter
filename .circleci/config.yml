@@ -394,7 +394,7 @@ jobs:
             echo CIRCLE_WORKFLOW_ID "${CIRCLE_WORKFLOW_ID:0:7}"
             # Fetch the stack names          
             export STACKS=($(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
-                    --stack-status-filter CREATE_COMPLETE --no-paginate --output text)) 
+                    --stack-status-filter CREATE_COMPLETE --no-paginate --output text)
             echo Stack names: "${STACKS[@]}"
       - run:
           name: Remove old stacks and files
@@ -414,60 +414,60 @@ jobs:
 workflows:
   default:
     jobs:
-      - build-frontend
-      - build-backend
-      - test-frontend:
-          requires: [build-frontend]
-      - test-backend:
-          requires: [build-backend]
-      - scan-backend:
-          requires: [build-backend]
-      - scan-frontend:
-          requires: [build-frontend]
-      - deploy-infrastructure:
-          filters:
-            branches:
-              only: master
-          requires: [test-frontend, test-backend, scan-frontend, scan-backend]
-      - configure-infrastructure:
-          filters:
-            branches:
-              only: master
-          context: udapeople
-          requires: [deploy-infrastructure]
-      - run-migrations:
-          filters:
-            branches:
-              only: master
-          context: udapeople
-          requires: [configure-infrastructure]
-      - deploy-frontend:
-          filters:
-            branches:
-              only: master
-          context: udapeople
-          requires: [run-migrations]
-      - deploy-backend:
-          filters:
-            branches:
-              only: master
-          context: udapeople
-          requires: [deploy-frontend]
-      - smoke-test:
-          filters:
-            branches:
-              only: master
-          context: udapeople
-          requires: [deploy-backend, deploy-frontend]
-      - cloudfront-update:
-          filters:
-            branches:
-              only: master
-          context: udapeople
-          requires: [smoke-test]
-      - cleanup:
-          filters:
-            branches:
-              only: master
-          context: udapeople
-          requires: [cloudfront-update]
+      # - build-frontend
+      # - build-backend
+      # - test-frontend:
+      #     requires: [build-frontend]
+      # - test-backend:
+      #     requires: [build-backend]
+      # - scan-backend:
+      #     requires: [build-backend]
+      # - scan-frontend:
+      #     requires: [build-frontend]
+      # - deploy-infrastructure:
+      #     filters:
+      #       branches:
+      #         only: master
+      #     requires: [test-frontend, test-backend, scan-frontend, scan-backend]
+      # - configure-infrastructure:
+      #     filters:
+      #       branches:
+      #         only: master
+      #     context: udapeople
+      #     requires: [deploy-infrastructure]
+      # - run-migrations:
+      #     filters:
+      #       branches:
+      #         only: master
+      #     context: udapeople
+      #     requires: [configure-infrastructure]
+      # - deploy-frontend:
+      #     filters:
+      #       branches:
+      #         only: master
+      #     context: udapeople
+      #     requires: [run-migrations]
+      # - deploy-backend:
+      #     filters:
+      #       branches:
+      #         only: master
+      #     context: udapeople
+      #     requires: [deploy-frontend]
+      # - smoke-test:
+      #     filters:
+      #       branches:
+      #         only: master
+      #     context: udapeople
+      #     requires: [deploy-backend, deploy-frontend]
+      # - cloudfront-update:
+      #     filters:
+      #       branches:
+      #         only: master
+      #     context: udapeople
+      #     requires: [smoke-test]
+      - cleanup
+        # filters:
+        #   branches:
+        #     only: master
+        # context: udapeople
+        # requires: [cloudfront-update]
