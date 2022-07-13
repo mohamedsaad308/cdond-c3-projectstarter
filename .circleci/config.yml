@@ -391,10 +391,7 @@ jobs:
                 list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
                 --no-paginate --output text) # output: udapeople-d940fea
             export OldWorkflowID=$(echo "$OldWorkflowID" | sed 's/-/ /g' | awk -F'[ -]' '{print $2}')  # output: d940fea
-            echo 'export OldWorkflowID=$OldWorkflowID' >> /etc/environment
             echo $OldWorkflowID >> old.txt
-            ls
-            source /etc/environment
             echo OldWorkflowID: "${OldWorkflowID}"
             echo CIRCLE_WORKFLOW_ID "${CIRCLE_WORKFLOW_ID:0:7}"
             # Fetch the stack names
@@ -404,7 +401,7 @@ jobs:
       - run:
           name: Remove old stacks and files
           command: |
-            ls
+            OldWorkflowID=$(cat old.txt)
             echo OldWorkflowID: "${OldWorkflowID}"
             echo CIRCLE_WORKFLOW_ID "${CIRCLE_WORKFLOW_ID:0:7}"
             if [[ "${CIRCLE_WORKFLOW_ID:0:7}" =~ "${OldWorkflowID}" ]]
