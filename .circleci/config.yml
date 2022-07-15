@@ -373,8 +373,9 @@ jobs:
           command: |
             export OldWorkflowID=$(aws cloudformation \
                 list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
-                --no-paginate --output text) # output: udapeople-d940fea
+                --no-paginate --output text)
             echo $OldWorkflowID >> old.txt
+            echo $OldWorkflowID
             aws cloudformation deploy \
                     --template-file .circleci/files/cloudfront.yml \
                     --stack-name InitialStack \
@@ -382,7 +383,11 @@ jobs:
                     --tags project=udapeople
             echo OldWorkflowID: "${OldWorkflowID}"
             echo Current Workfolow I: "${CIRCLE_WORKFLOW_ID:0:7}"
-      # - destroy_environment
+      - persist_to_workspace:
+          root: .
+          paths:
+            - old.txt
+      - destroy_environment
       - revert_migrations
   cleanup:
     docker:
@@ -393,20 +398,15 @@ jobs:
           name: Install dependencies
           command: |
             apk add --no-cache aws-cli
+
+      - attach_workspace:
+          at: .circleci/ansible
+
       - run:
           name: Get old stack workflow id
           command: |
-            export OldWorkflowID=$(aws cloudformation \
-                list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
-                --no-paginate --output text) # output: udapeople-d940fea
-            export OldWorkflowID=$(echo "$OldWorkflowID" | sed 's/-/ /g' | awk -F'[ -]' '{print $2}')  # output: d940fea
-            echo $OldWorkflowID >> old.txt
-            echo OldWorkflowID: "${OldWorkflowID}"
-            echo CIRCLE_WORKFLOW_ID "${CIRCLE_WORKFLOW_ID:0:7}"
-            # Fetch the stack names
-            export STACKS=$(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
-                --stack-status-filter CREATE_COMPLETE --no-paginate --output text)
-            echo "STACKS : $STACKS"
+            ls
+            cat old.txt
       - run:
           name: Remove old stacks and files
           command: |
@@ -475,7 +475,7 @@ workflows:
             branches:
               only: master
           context: udapeople
-          requires: [smoke-test]
+          # requires: [smoke-test]
       - cleanup:
           filters:
             branches:
