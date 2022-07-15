@@ -36,10 +36,21 @@ commands:
                 npm install
                 npm run migrations:revert
             fi
+  install-awscli:
+    steps:
+      - run:
+          name: Install dependencies
+          command: |
+            apt-get update
+            apt-get upgrade -y
+            apt install unzip curl -y
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            ./aws/install
 jobs:
   build-frontend:
     docker:
-      - image: cimg/node:13.8.0
+      - image: node:13.8.0-stretch-slim
     steps:
       - checkout
       - restore_cache:
@@ -57,7 +68,7 @@ jobs:
 
   build-backend:
     docker:
-      - image: cimg/node:13.8.0
+      - image: node:13.8.0-stretch-slim
     steps:
       - checkout
       - restore_cache:
@@ -75,7 +86,7 @@ jobs:
 
   test-frontend:
     docker:
-      - image: cimg/node:13.8.0
+      - image: node:13.8.0-stretch-slim
     steps:
       - checkout
       - restore_cache:
@@ -89,7 +100,7 @@ jobs:
 
   test-backend:
     docker:
-      - image: cimg/node:13.8.0
+      - image: node:13.8.0-stretch-slim
     steps:
       - checkout
       - restore_cache:
@@ -102,7 +113,7 @@ jobs:
             npm run test
   scan-frontend:
     docker:
-      - image: cimg/node:13.8.0
+      - image: node:13.8.0-stretch-slim
     steps:
       - checkout
       - restore_cache:
@@ -117,7 +128,7 @@ jobs:
 
   scan-backend:
     docker:
-      - image: cimg/node:13.8.0
+      - image: node:13.8.0-stretch-slim
     steps:
       - checkout
       - restore_cache:
@@ -233,15 +244,7 @@ jobs:
       - image: node:13.8.0-stretch-slim
     steps:
       - checkout
-      - run:
-          name: Install dependencies
-          command: |
-            apt-get update
-            apt-get upgrade -y
-            apt install unzip curl -y
-            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-            unzip awscliv2.zip
-            ./aws/install
+      - install-awscli
       - run:
           name: Get backend url
           command: |
@@ -256,12 +259,12 @@ jobs:
             export API_URL="http://${BACKEND_DNS}:3030"
             echo "API_URL = ${API_URL}"
             echo API_URL="http://${BACKEND_DNS}:3030" >> frontend/.env
-            echo $API_URL > backend-dns
+            echo $API_URL > backend-dns.txt
             cat frontend/.env
       - persist_to_workspace:
           root: .
           paths:
-            - backend-dns
+            - backend-dns.txt
       - restore_cache:
           keys: [frontend-build]
       - run:
@@ -321,10 +324,7 @@ jobs:
       - checkout
       - run:
           name: Install dependencies
-          command: |
-            apt-get update
-            apt-get upgrade -y
-            apt install awscli curl -y
+      - install-awscli
       - attach_workspace:
           at: .
       - run:
