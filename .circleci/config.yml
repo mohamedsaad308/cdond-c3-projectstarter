@@ -326,17 +326,9 @@ jobs:
       - attach_workspace:
           at: .
       - run:
-          name: Test if workspace file exists
-          command: ls
-      - run:
           name: Backend smoke test.
           command: |
-            export BACKEND_DNS=$(aws ec2 describe-instances \
-            --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
-            --query "Reservations[*].Instances[*].PublicDnsName" \
-            --output=text)
-            export BACKEND_DNS=$(echo $BACKEND_DNS | xargs)
-            export API_URL="http://${BACKEND_DNS}:3030"
+            export API_URL=$(cat backend-dns.txt)
             echo "API_URL = ${API_URL}"
             if curl "${API_URL}/api/status" | grep "ok"
             then
