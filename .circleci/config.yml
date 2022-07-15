@@ -376,7 +376,7 @@ jobs:
                 --no-paginate --output text)
             if [[ -z "$OldWorkflowID" ]]; then
               echo "This is the initial stack"
-              export OldWorkflowID=$CIRCLE_WORKFLOW_ID:0:7
+              export OldWorkflowID="${CIRCLE_WORKFLOW_ID:0:7}"
             fi
             echo $OldWorkflowID >> old.txt
             echo $OldWorkflowID
