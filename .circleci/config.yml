@@ -322,8 +322,6 @@ jobs:
       - image: node:13.8.0-stretch-slim
     steps:
       - checkout
-      - run:
-          name: Install dependencies
       - install-awscli
       - attach_workspace:
           at: .
