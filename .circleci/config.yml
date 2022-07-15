@@ -50,7 +50,7 @@ commands:
 jobs:
   build-frontend:
     docker:
-      - image: node:13.8.0-stretch-slim
+      - image: cimg/node:13.8.0
     steps:
       - checkout
       - restore_cache:
@@ -68,7 +68,7 @@ jobs:
 
   build-backend:
     docker:
-      - image: node:13.8.0-stretch-slim
+      - image: cimg/node:13.8.0
     steps:
       - checkout
       - restore_cache:
