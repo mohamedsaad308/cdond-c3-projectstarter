@@ -226,12 +226,11 @@ jobs:
                 # If you are using kvdb.io, generate the bucket ID "9GE4jRtKznmVKRfvdBABBe" in your local terminal first
                 curl https://kvdb.io/4zZ1b4NFt2ziX1o4pnyHBw/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
             fi
-      - run: exit 1
       - destroy_environment
       - revert_migrations
   deploy-frontend:
     docker:
-      - image: cimg/node:13.8.0
+      - image: node:13.8.0-stretch-slim
     steps:
       - checkout
       - run:
@@ -239,7 +238,10 @@ jobs:
           command: |
             sudo apt-get update
             sudo apt-get upgrade -y
-            sudo apt install awscli -y
+            apt install unzip curl -y
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            ./aws/install
       - run:
           name: Get backend url
           command: |
@@ -433,62 +435,60 @@ jobs:
 workflows:
   default:
     jobs:
-      - run-migrations:
+      - build-frontend
+      - build-backend
+      - test-frontend:
+          requires: [build-frontend]
+      - test-backend:
+          requires: [build-backend]
+      - scan-backend:
+          requires: [build-backend]
+      - scan-frontend:
+          requires: [build-frontend]
+      - deploy-infrastructure:
+          filters:
+            branches:
+              only: master
+          requires: [test-frontend, test-backend, scan-frontend, scan-backend]
+      - configure-infrastructure:
+          filters:
+            branches:
+              only: master
           context: udapeople
-      # - build-frontend
-      # - build-backend
-      # - test-frontend:
-      #     requires: [build-frontend]
-      # - test-backend:
-      #     requires: [build-backend]
-      # - scan-backend:
-      #     requires: [build-backend]
-      # - scan-frontend:
-      #     requires: [build-frontend]
-      # - deploy-infrastructure:
-      #     filters:
-      #       branches:
-      #         only: master
-      #     requires: [test-frontend, test-backend, scan-frontend, scan-backend]
-      # - configure-infrastructure:
-      #     filters:
-      #       branches:
-      #         only: master
-      #     context: udapeople
-      #     requires: [deploy-infrastructure]
-      # - run-migrations:
-      #     filters:
-      #       branches:
-      #         only: master
-      #     context: udapeople
-      #     requires: [configure-infrastructure]
-      # - deploy-frontend:
-      #     filters:
-      #       branches:
-      #         only: master
-      #     context: udapeople
-      #     requires: [run-migrations]
-      # - deploy-backend:
-      #     filters:
-      #       branches:
-      #         only: master
-      #     context: udapeople
-      #     requires: [run-migrations]
-      # - smoke-test:
-      #     filters:
-      #       branches:
-      #         only: master
-      #     context: udapeople
-      #     requires: [deploy-backend, deploy-frontend]
-      # - cloudfront-update:
-      #     filters:
-      #       branches:
-      #         only: master
-      #     context: udapeople
-      #     requires: [smoke-test]
-      # - cleanup:
-      #     filters:
-      #       branches:
-      #         only: master
-      #     context: udapeople
-      #     requires: [cloudfront-update]
+          requires: [deploy-infrastructure]
+      - run-migrations:
+          filters:
+            branches:
+              only: master
+          context: udapeople
+          requires: [configure-infrastructure]
+      - deploy-frontend:
+          filters:
+            branches:
+              only: master
+          context: udapeople
+          requires: [run-migrations]
+      - deploy-backend:
+          filters:
+            branches:
+              only: master
+          context: udapeople
+          requires: [run-migrations]
+      - smoke-test:
+          filters:
+            branches:
+              only: master
+          context: udapeople
+          requires: [deploy-backend, deploy-frontend]
+      - cloudfront-update:
+          filters:
+            branches:
+              only: master
+          context: udapeople
+          requires: [smoke-test]
+      - cleanup:
+          filters:
+            branches:
+              only: master
+          context: udapeople
+          requires: [cloudfront-update]
