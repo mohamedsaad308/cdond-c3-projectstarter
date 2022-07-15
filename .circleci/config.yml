@@ -196,7 +196,7 @@ jobs:
       - destroy_environment
   run-migrations:
     docker:
-      - image: cimg/node:13.8.0
+      - image: node:13.8.0-stretch-slim
     steps:
       - checkout
       - restore_cache:
@@ -221,9 +221,12 @@ jobs:
           name: Install aws/cli in case of failure
           when: on_fail
           command: |
-            sudo apt-get update
-            sudo apt-get upgrade -y
-            sudo apt install awscli -y
+            apt-get update
+            apt-get upgrade -y
+            apt install unzip curl -y
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            ./aws/install
       - destroy_environment
       - revert_migrations
   deploy-frontend:
