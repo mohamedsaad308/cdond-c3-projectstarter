@@ -10,8 +10,6 @@
     - ansible_python_interpreter: /usr/bin/python3
     - ansible_host_key_checking: false
     - ansible_stdout_callback: yaml
-    - TYPEORM_MIGRATIONS_DIR: "{{ lookup('ansible.builtin.env', 'TYPEORM_MIGRATIONS_DIR')}}"
-    - TYPEORM_CONNECTION: "{{ lookup('ansible.builtin.env', 'TYPEORM_CONNECTION', default='postgres')}}"
     - os_environment:
         - key: TYPEORM_CONNECTION
           value: "{{ lookup('ansible.builtin.env', 'TYPEORM_CONNECTION')}}"
@@ -55,3 +53,4 @@
 
   roles:
     - configure-server
+    - configure-prometheus-node-exporter
